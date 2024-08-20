@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Notification {
+  id               Int              @id @default(autoincrement())
+  message          String
+  createdAt        DateTime         @default(now())
+  data             String
+  read             Boolean          @default(false)
+  type             String
+  notificationType NotificationType @relation(fields: [type], references: [code])
+}
+
+model User {
+  id        Int    @id @default(autoincrement())
+  username  String @unique
+  avatarUrl String
+}
+
+enum NotificationTypeCodeEnum {
+  PLATFORM_UPDATE
+  COMMENT_TAG
+  ACCESS_GRANTED
+  JOIN_WORKSPACE
+}
+
+model NotificationType {
+  id           Int            @id @default(autoincrement())
+  code         String         @unique
+  notification Notification[]
+}
