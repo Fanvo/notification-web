@@ -36,17 +36,23 @@ const schema = z.object({
     required_error: "Notification is required",
   }),
   data: z.union([
-    z.string().min(1, "Platform update is required").optional(),
-    z.string().min(1, "Comment tag is required").optional(),
-    z.string().min(1, "Access granted tag is required").optional(),
-    z.string().min(1, "Join workspace tag is required").optional(),
+    z.string().min(1, "Form is required").optional(),
+    z.string().min(1, "Form is required").optional(),
+    z.string().min(1, "Form is required").optional(),
+    z.string().min(1, "Form is required").optional(),
   ]),
 });
 
 const DialogNotification = ({ users }: Props) => {
   const [showModal, setShowModal] = useState(false);
 
-  const { control, handleSubmit, watch, reset } = useForm({
+  const {
+    control,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm({
     resolver: zodResolver(schema),
   });
   const notificationOptions = Object.values(NotificationTypeEnum).map(
@@ -114,7 +120,7 @@ const DialogNotification = ({ users }: Props) => {
         return (
           <fieldset className="mb-[15px] flex items-center gap-5">
             <label
-              className="text-violet11 w-[90px] text-right text-[15px]"
+              className="w-[90px] text-right text-[15px] text-violet11"
               htmlFor="platformUpdate"
             >
               Version
@@ -137,7 +143,7 @@ const DialogNotification = ({ users }: Props) => {
         return (
           <fieldset className="mb-[15px] flex items-center gap-5">
             <label
-              className="text-violet11 w-[90px] text-right text-[15px]"
+              className="w-[90px] text-right text-[15px] text-violet11"
               htmlFor="commentTag"
             >
               User
@@ -166,7 +172,7 @@ const DialogNotification = ({ users }: Props) => {
         return (
           <fieldset className="mb-[15px] flex items-center gap-5">
             <label
-              className="text-violet11 w-[90px] text-right text-[15px]"
+              className="w-[90px] text-right text-[15px] text-violet11"
               htmlFor="accessGranted"
             >
               User
@@ -195,7 +201,7 @@ const DialogNotification = ({ users }: Props) => {
         return (
           <fieldset className="mb-[15px] flex items-center gap-5">
             <label
-              className="text-violet11 w-[90px] text-right text-[15px]"
+              className="w-[90px] text-right text-[15px] text-violet11"
               htmlFor="joinWorkspace"
             >
               User
@@ -228,23 +234,23 @@ const DialogNotification = ({ users }: Props) => {
   return (
     <Dialog.Root open={showModal} onOpenChange={setShowModal}>
       <Dialog.Trigger asChild>
-        <button className="text-violet11 shadow-blackA4 hover:bg-mauve3 inline-flex h-[35px] items-center justify-center rounded-[4px] bg-white px-[15px] font-medium leading-none shadow-[0_2px_10px] focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none">
+        <button className="inline-flex h-[35px] items-center justify-center rounded-[4px] bg-white px-[15px] font-medium leading-none text-violet11 shadow-[0_2px_10px] shadow-blackA4 hover:bg-mauve3 focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none">
           Add Notification
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0" />
-        <Dialog.Content className="data-[state=open]:animate-contentShow fixed left-[50%] top-[50%] max-h-[85vh] w-[90vw] max-w-[450px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none">
-          <Dialog.Title className="text-mauve12 m-0 text-[17px] font-medium">
+        <Dialog.Overlay className="fixed inset-0 bg-blackA6 data-[state=open]:animate-overlayShow" />
+        <Dialog.Content className="fixed left-[50%] top-[50%] max-h-[85vh] w-[90vw] max-w-[450px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none data-[state=open]:animate-contentShow">
+          <Dialog.Title className="m-0 text-[17px] font-medium text-mauve12">
             Select Notification
           </Dialog.Title>
-          <Dialog.Description className="text-mauve11 mb-5 mt-[10px] text-[15px] leading-normal">
+          <Dialog.Description className="mb-5 mt-[10px] text-[15px] leading-normal text-mauve11">
             Add notification here
           </Dialog.Description>
           <form onSubmit={handleSubmit(onSubmit)}>
             <fieldset className="mb-[15px] flex items-center gap-5">
               <label
-                className="text-violet11 w-[90px] text-right text-[15px]"
+                className="w-[90px] text-right text-[15px] text-violet11"
                 htmlFor="type"
               >
                 Notification
@@ -268,6 +274,15 @@ const DialogNotification = ({ users }: Props) => {
               />
             </fieldset>
             {renderNotificationField()}
+            {errors.data && (
+              <p style={{ color: "red" }}>{errors.data.message?.toString()}</p>
+            )}
+            {errors.type && (
+              <p style={{ color: "red" }}>
+                {errors.type.type === "invalid_enum_value" &&
+                  "Please select the type"}
+              </p>
+            )}
             <div className="flex justify-between">
               <button
                 type="submit"
@@ -276,7 +291,7 @@ const DialogNotification = ({ users }: Props) => {
                 Submit
               </button>
               <button
-                className="mt-4 rounded bg-blue-500 p-2 text-white"
+                className="mt-4 rounded bg-red-500 p-2 text-white"
                 onClick={handleCancelNotification}
               >
                 Cancel

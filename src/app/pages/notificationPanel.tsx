@@ -42,7 +42,7 @@ export function NotificationPanel() {
   return (
     <div>
       {/* button and bell */}
-      <div className="mt-[100px] flex w-[250px] items-center justify-between sm:w-[400px]">
+      <div className="mt-[100px] flex items-center justify-between">
         <DialogNotification users={users} />
         <div
           className="relative cursor-pointer"

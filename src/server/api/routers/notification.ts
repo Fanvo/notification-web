@@ -19,7 +19,6 @@ const createNotification = async (
 };
 
 const getUser = async (ctx: any, userId: string) => {
-  console.log("userId", ctx.db.user.findMany());
   return ctx.db.user.findUnique({
     where: {
       id: Number(userId),
